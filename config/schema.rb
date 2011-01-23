@@ -24,7 +24,8 @@ ActiveRecord::Schema.define do
   
   create_table :games, :force => true do |t|
     t.timestamps
-    t.integer :current_user_id
+    t.belongs_to :current_user
+    t.string     :current_stat
   end
   
   create_table :games_users, :force => true, :id => false do |t|

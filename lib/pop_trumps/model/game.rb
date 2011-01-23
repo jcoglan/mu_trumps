@@ -41,6 +41,18 @@ module PopTrumps
     def play(user, artist, stat_name)
       raise PlayOutOfTurn unless user == current_user
       raise NotInDeck unless current_artist_for(user) == artist
+      update_attribute(:current_stat, stat_name)
+    end
+    
+    def ack(user)
+      raise PlayOutOfTurn unless user != current_user
+      attack, defense = [current_user, user].map { |u| current_artist_for(u).stats[current_stat] }
+      if attack > defense
+        round_won_by(current_user)
+      elsif defense > attack
+        round_won_by(user)
+      end
+      update_attribute(:current_stat, nil)
     end
 
     def round_won_by(winner)

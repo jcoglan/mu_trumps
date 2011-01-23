@@ -66,8 +66,8 @@ describe PopTrumps::Game do
 
   describe "play" do
     before do
-      @game = PopTrumps::Game.join(alice)
-      PopTrumps::Game.join(bob)
+      PopTrumps::Game.join(alice)
+      @game = PopTrumps::Game.join(bob)
 
       PopTrumps::Artist.all.each_with_index do |artist, index|
         artist.assign("stamina", index)
@@ -82,6 +82,19 @@ describe PopTrumps::Game do
     it "throws an error if the artist is not at the top of the user's deck" do
       @game.current_artist_for(alice).should == @imogen
       lambda { @game.play(alice, @gaga, "stamina") }.should raise_error(PopTrumps::Game::NotInDeck)
+    end
+    
+    it "sets the current stat for the round" do
+      @game.current_stat.should be_nil
+      @game.play(alice, @imogen, "stamina")
+      @game.current_stat.should == "stamina"
+    end
+    
+    it "decides the round when the other player acks" do
+      @game.play(alice, @imogen, "stamina")
+      @game.should_receive(:round_won_by).with(bob)
+      @game.ack(bob)
+      @game.current_stat.should be_nil
     end
   end
 
