@@ -5,6 +5,12 @@ module PopTrumps
   class Application < Sinatra::Base
     
     helpers do
+      def cards_for_user(game, user)
+        game.cards_for(user).map do |card|
+          {'id' => card.artist.id, 'name' => card.artist.name, 'image' => card.artist.image_url}
+        end
+      end
+      
       def notify_current_user(game)
         game.users.each do |user|
           Messaging.publish(user, 'current_user', 'username' => game.current_user.lastfm_username)
@@ -42,12 +48,9 @@ module PopTrumps
         notify_current_user(game)
       end
       
-      cards = game.cards_for(user).map do |card|
-        {'id' => card.artist.id, 'name' => card.artist.name, 'image' => card.artist.image_url}
-      end
       return_json('status' => game.status,
                   'id'     => game.id,
-                  'cards'  => cards)
+                  'cards'  => cards_for_user(game, user))
     end
     
     get '/games/:id.json' do
@@ -58,6 +61,12 @@ module PopTrumps
                   'id'           => game.id,
                   'current_user' => game.current_user.lastfm_username,
                   'users'        => Hash[scores])
+    end
+    
+    get '/games/:id/cards/:username.json' do
+      game = Game.find(params[:id])
+      user = User.find_by_lastfm_username(params[:username])
+      return_json(cards_for_user(game, user))
     end
     
     post '/games/:id/plays.json' do

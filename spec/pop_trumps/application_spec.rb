@@ -65,7 +65,7 @@ describe PopTrumps::Application do
           "id"     => game_id,
           "cards"  => [
             {"id" => @imogen.id, "name" => @imogen.name, "image" => @imogen.image_url},
-            {"id" => @gaga.id,   "name" => @gaga.name, "image" => @gaga.image_url }
+            {"id" => @gaga.id,   "name" => @gaga.name,   "image" => @gaga.image_url }
           ]
         }
       end
@@ -114,6 +114,21 @@ describe PopTrumps::Application do
           "bob"   => 2
         }
       }
+    end
+  end
+  
+  describe "/games/:id/cards/:username.json" do
+    before do
+      @game = PopTrumps::Game.join(@alice)
+      PopTrumps::Game.join(@bob)
+    end
+    
+    it "returns the current deck for the user" do
+      get "/games/#{@game.id}/cards/alice.json"
+      json.should == [
+        {"id" => @imogen.id, "name" => @imogen.name, "image" => @imogen.image_url},
+        {"id" => @gaga.id,   "name" => @gaga.name,   "image" => @gaga.image_url }
+      ]
     end
   end
   

@@ -43,7 +43,7 @@ GET /games/:id.json
 }
 
 
-GET /games/:id/decks/:username.json
+GET /games/:id/cards/:username.json
 [{"id": 1, "name": "Justin Bieber"}, {"id": 2, "name": "Lady Gaga"}] (N=26)
 
 
