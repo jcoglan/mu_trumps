@@ -10,6 +10,12 @@ ActiveRecord::Base.establish_connection(
 require dir + '/../config/schema'
 require dir + '/factories'
 
+require 'fakeweb'
+FakeWeb.allow_net_connect = false
+
+FakeWeb.register_uri(:get, 'http://ws.audioscrobbler.com/2.0/?user=jcoglan&method=user.gettopartists&format=json&api_key=fdb6a3b0db7da333c1eb1a7167160397',
+                     :body => File.read(dir + '/fixtures/top_artists.json'))
+
 RSpec.configure do |config|
   config.after do
     ObjectSpace.each_object(Class) do |klass|
