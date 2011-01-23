@@ -26,6 +26,11 @@ module PopTrumps
     post '/games.json' do
       user  = User[params[:username]]
       game  = Game.join(user)
+      
+      if game.users.size == 2
+        Messaging.publish(game.users.first, "start")
+      end
+      
       cards = game.cards_for(user).map do |card|
         {'id' => card.artist.id, 'name' => card.artist.name}
       end
