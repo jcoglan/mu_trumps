@@ -56,6 +56,14 @@ GET (long-poll) /messages/:username.json
   "event":    "start"
 }
 {
+  "event":    "current_user",
+  "username": "gideonb"
+}
+{
+  "event":    "refresh_deck",
+  "deck":     [{"id": 1, "name": "Justin Bieber"}, {"id": 2, "name": "Lady Gaga"}]
+}
+{
   "event":    "play",
   "username": "gideonb",
   "stat":     "releases",
