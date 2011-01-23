@@ -1,0 +1,59 @@
+GET /users/:username/deck.json
+[{"id": 1, "name": "Justin Bieber"}, {"id": 2, "name": "Lady Gaga"}] (N=26)
+
+
+GET /tags/:tag_name/deck.json
+[{"id": 1, "name": "Justin Bieber"}, {"id": 2, "name": "Lady Gaga"}] (N=26)
+
+
+GET /artists/:id.json
+{
+  "id":   1,
+  "name": "Justin Bieber",
+  "image" "http://last.fm/...",
+  "stats": {
+    "tour_dates":   56,
+    "danceability": 0.45,
+    "releases":     3
+  }
+}
+
+
+POST /games.json
+{"id": 3}
+
+
+POST /games/:id/users.json :: username=jcoglan
+{"status":"ok|error"}
+
+
+GET /games/:id.json
+{
+  "current_user": "jcoglan",
+  "users": {
+    "jcoglan": 20,
+    "gideonb": 32
+  }
+}
+
+
+GET /games/:id/decks/:username.json
+[{"id": 1, "name": "Justin Bieber"}, {"id": 2, "name": "Lady Gaga"}] (N=26)
+
+
+POST /games/:id/plays.json :: username=jcoglan, artist_id=45, stat=releases
+{"status": "ok|error"}
+
+
+GET (long-poll) /games/:id/messages/:username.json
+{
+  "event":    "play",
+  "username": "gideonb",
+  "stat":     "releases",
+  "value":    12
+}
+{
+  "event":    "result",
+  "winner":   "jcoglan"
+}
+
