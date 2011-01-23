@@ -9,3 +9,11 @@ ActiveRecord::Base.establish_connection(
 
 require dir + '/../config/schema'
 require dir + '/factories'
+
+RSpec.configure do |config|
+  config.after do
+    ObjectSpace.each_object(Class) do |klass|
+      klass.delete_all if klass < ActiveRecord::Base
+    end
+  end
+end

@@ -12,6 +12,14 @@ ActiveRecord::Schema.define do
   add_index :artists_users, :artist_id
   add_index :artists_users, :user_id
   
+  create_table :statistics, :force => true do |t|
+    t.timestamps
+    t.belongs_to :artist
+    t.string     :name
+    t.float      :value
+  end
+  add_index :statistics, [:artist_id, :name]
+  
   create_table :users, :force => true do |t|
     t.timestamps
     t.string :lastfm_username
