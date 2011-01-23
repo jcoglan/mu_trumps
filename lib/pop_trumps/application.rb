@@ -82,8 +82,8 @@ module PopTrumps
     
     post '/games/:id/ack.json' do
       begin
-        game   = Game.find(params[:id])
-        user   = User.find_by_lastfm_username(params[:username])
+        game = Game.find(params[:id])
+        user = User.find_by_lastfm_username(params[:username])
         
         game.ack(user)
         notify_current_user(game)
@@ -98,7 +98,7 @@ module PopTrumps
     end
     
     get '/poke/:username/:event' do
-      user   = User.find_by_lastfm_username(params[:username])
+      user = User.find_by_lastfm_username(params[:username])
       Messaging.publish(user, params[:event])
       return_json('status' => 'ok')
     end
