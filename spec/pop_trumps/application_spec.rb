@@ -53,7 +53,7 @@ describe PopTrumps::Application do
   describe "/games.json" do
     describe "with no waiting games" do
       it "creates a waiting game and returns the user's cards" do
-        post "/games.json", :username => "alice"
+        post "/games.json", :username => "someguy"
         game_id = PopTrumps::Game.first.id
         json.should == {
           "status" => "waiting",

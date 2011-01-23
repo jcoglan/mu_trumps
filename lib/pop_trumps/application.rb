@@ -25,12 +25,12 @@ module PopTrumps
     end
     
     post '/users/register.json' do
-      user = User.find_or_create_by_lastfm_username(params[:username])
+      user = User[params[:username]]
       return_json('id' => user.id, 'username' => user.lastfm_username)
     end
     
     post '/games.json' do
-      user  = User.find_by_lastfm_username(params[:username])
+      user  = User[params[:username]]
       game  = Game.join(user)
       cards = game.cards_for(user).map do |card|
         {'id' => card.artist.id, 'name' => card.artist.name}
