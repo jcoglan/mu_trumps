@@ -33,7 +33,7 @@ module PopTrumps
     def call(env)
       request  = Rack::Request.new(env)
       username = request.path_info.split('/')[1]
-      response = Response.new(@options)
+      response = Response.new
       
       callback = env['async.callback']
       callback.call [200, TYPE_JSON, response]
