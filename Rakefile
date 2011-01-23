@@ -9,3 +9,11 @@ namespace :import do
     end
   end
 end
+
+namespace :db do
+  task :setup do
+    dir = File.expand_path(File.dirname(__FILE__))
+    require dir + '/config/environment'
+    require dir + '/config/schema'
+  end
+end
