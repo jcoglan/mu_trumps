@@ -1,5 +1,6 @@
 dir = File.expand_path(File.dirname(__FILE__))
 
+require 'rubygems'
 require 'active_record'
 require 'fileutils'
 FileUtils.mkdir_p(dir + '/../db')
