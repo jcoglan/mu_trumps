@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe PopTrumps::Game do
   before do
-    Factory :artist, :name => "Imogen Heap"
-    Factory :artist, :name => "Justin Bieber"
-    Factory :artist, :name => "Lady Gaga"
-    Factory :artist, :name => "Sufjan Stevens"
+    @imogen = Factory(:artist, :name => "Imogen Heap", :id => 100)
+    @justin = Factory(:artist, :name => "Justin Bieber")
+    @gaga   = Factory(:artist, :name => "Lady Gaga")
+    @sufjan = Factory(:artist, :name => "Sufjan Stevens")
   end
   
   let(:alice) { Factory :user, :lastfm_username => "alice" }
@@ -61,6 +61,39 @@ describe PopTrumps::Game do
       PopTrumps::Artist.should_receive(:random).with(52).and_return all_artists
       game = PopTrumps::Game.create
       game.cards.map(&:artist).should == all_artists
+    end
+  end
+
+  describe "play" do
+    before do
+      @game = PopTrumps::Game.join(alice)
+      PopTrumps::Game.join(bob)
+
+      PopTrumps::Artist.all.each_with_index do |artist, index|
+        artist.assign("stamina", index)
+      end
+    end
+
+    it "throws an error if the wrong player tries to play" do
+      @game.current_user.should == alice
+      lambda { @game.play(bob, @justin, "stamina") }.should raise_error(PopTrumps::Game::PlayOutOfTurn)
+    end
+
+    it "throws an error if the artist is not at the top of the user's deck" do
+      @game.current_artist_for(alice).should == @imogen
+      lambda { @game.play(alice, @gaga, "stamina") }.should raise_error(PopTrumps::Game::NotInDeck)
+    end
+  end
+
+  describe "round_won_by" do
+    before do
+      PopTrumps::Game.join(alice)
+      @game = PopTrumps::Game.join(bob)
+    end
+
+    it "transfers both current cards to the deck of the winner" do
+      @game.round_won_by(alice)
+      @game.cards_for(alice).map(&:artist).should == [@gaga, @justin, @imogen]
     end
   end
 end

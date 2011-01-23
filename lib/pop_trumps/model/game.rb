@@ -1,6 +1,6 @@
 module PopTrumps
   class Game < ActiveRecord::Base
-    has_many :cards
+    has_many :cards, :order => :position
     has_and_belongs_to_many :users, :uniq => true
     belongs_to :current_user, :class_name => 'PopTrumps::User'
     
@@ -10,6 +10,9 @@ module PopTrumps
     WAITING   = 'waiting'
     READY     = 'ready'
     
+    class PlayOutOfTurn < StandardError ; end
+    class NotInDeck     < StandardError ; end
+
     def self.join(user)
       game = last
       game = create unless game and game.users.size == 1
@@ -31,6 +34,26 @@ module PopTrumps
       cards.select { |card| card.user == user }
     end
     
+    def current_artist_for(user)
+      cards_for(user).first.artist
+    end
+
+    def play(user, artist, stat_name)
+      raise PlayOutOfTurn unless user == current_user
+      raise NotInDeck unless current_artist_for(user) == artist
+    end
+
+    def round_won_by(winner)
+      loser = users.reject { |u| u == winner }.first
+      top_cards = [loser, winner].map { |u| cards_for(u).first }
+      top_cards.each do |card|
+        card.reload
+        card.update_attribute(:user, winner)
+        card.move_to_bottom
+      end
+      reload
+    end
+
     def status
       case users.count
       when 1 then WAITING

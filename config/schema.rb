@@ -18,6 +18,7 @@ ActiveRecord::Schema.define do
     t.belongs_to :artist
     t.belongs_to :game
     t.belongs_to :user
+    t.integer    :position
   end
   
   create_table :games, :force => true do |t|

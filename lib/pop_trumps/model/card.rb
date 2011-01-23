@@ -5,5 +5,7 @@ module PopTrumps
     belongs_to :user
     
     validates_presence_of :artist, :game
+
+    acts_as_list :scope => :game
   end
 end
