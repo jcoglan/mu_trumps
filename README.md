@@ -6,7 +6,7 @@ Midem conference in Cannes.
 
 To run the server, you need Ruby and these gems:
 
-    gem install rack thin sinatra activerecord sqlite3
+    gem install rack thin json sinatra activerecord sqlite3
 
 Initialize the database:
 

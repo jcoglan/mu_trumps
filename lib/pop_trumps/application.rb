@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'json'
 
 module PopTrumps
   class Application < Sinatra::Base
