@@ -95,10 +95,15 @@ module PopTrumps
         user = User.find_by_lastfm_username(params[:username])
         
         game.ack(user)
-        notify_current_user(game)
         
         Messaging.publish(game.current_user, 'result', 'result' => 'win')
         Messaging.publish(game.waiting_user, 'result', 'result' => 'lose')
+        
+        [game.current_user, game.waiting_user].each do |user|
+          Messaging.publish(user, 'cards', 'cards' => cards_for_user(game, user))
+        end
+        
+        notify_current_user(game)
         
         return_json('status' => 'ok')
       rescue

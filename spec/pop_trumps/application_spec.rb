@@ -6,6 +6,10 @@ describe PopTrumps::Application do
   let(:app)  { PopTrumps::Application.new }
   let(:json) { JSON.parse(last_response.body) }
   
+  def artist_json(artist)
+    {"id" => artist.id, "name" => artist.name, "image" => artist.image_url}
+  end
+  
   before do
     @imogen = Factory(:artist, :name => "Imogen Heap", :id => 100)
     @justin = Factory(:artist, :name => "Justin Bieber")
@@ -63,10 +67,7 @@ describe PopTrumps::Application do
         json.should == {
           "status" => "waiting",
           "id"     => game_id,
-          "cards"  => [
-            {"id" => @imogen.id, "name" => @imogen.name, "image" => @imogen.image_url},
-            {"id" => @gaga.id,   "name" => @gaga.name,   "image" => @gaga.image_url }
-          ]
+          "cards"  => [artist_json(@imogen), artist_json(@gaga)]
         }
       end
     end
@@ -81,10 +82,7 @@ describe PopTrumps::Application do
         json.should == {
           "status" => "ready",
           "id"     => @game.id,
-          "cards"  => [
-            {"id" => @justin.id, "name" => @justin.name, "image" => @imogen.image_url},
-            {"id" => @sufjan.id, "name" => @sufjan.name, "image" => @imogen.image_url}
-          ]
+          "cards"  => [artist_json(@justin), artist_json(@sufjan)]
         }
       end
       
@@ -125,10 +123,7 @@ describe PopTrumps::Application do
     
     it "returns the current deck for the user" do
       get "/games/#{@game.id}/cards/alice.json"
-      json.should == [
-        {"id" => @imogen.id, "name" => @imogen.name, "image" => @imogen.image_url},
-        {"id" => @gaga.id,   "name" => @gaga.name,   "image" => @gaga.image_url }
-      ]
+      json.should == [artist_json(@imogen), artist_json(@gaga)]
     end
   end
   
@@ -171,11 +166,19 @@ describe PopTrumps::Application do
     end
     
     it "notifies both players about the result of the round" do
-      PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
-      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
-      
       PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
       PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+      
+      PopTrumps::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+          artist_json(@sufjan), artist_json(@imogen), artist_json(@justin)
+        ])
+      
+      PopTrumps::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [
+          artist_json(@gaga)
+        ])
+      
+      PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
+      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
       
       post "/games/#{@game.id}/ack.json", :username => "bob"
     end
