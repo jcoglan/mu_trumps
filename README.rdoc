@@ -21,3 +21,9 @@ And run the server:
 To import a Last.fm user's top artists:
 
   rake import:lastfm:top_artists[username]
+
+
+=== Testing
+
+  gem install rspec rack-test factory_girl fakeweb
+  rspec -bcf nested spec/
