@@ -24,7 +24,13 @@ POST /games.json
 
 
 POST /games/:id/users.json :: username=jcoglan
-{"status":"ok|error"}
+{
+  "status": "ok|error",
+  "cards": [
+    {"id": 1, "name": "Imogen Heap"},
+    ...
+  ]
+}
 
 
 GET /games/:id.json
