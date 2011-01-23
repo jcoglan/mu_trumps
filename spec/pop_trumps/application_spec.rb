@@ -141,10 +141,16 @@ describe PopTrumps::Application do
       
       post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
     end
+  end
+  
+  describe "/games/:id/ack.json" do
+    before do
+      PopTrumps::Game.join(@alice)
+      @game = PopTrumps::Game.join(@bob)
+      post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
+    end
     
     it "allows the waiting user to acknowledge the play" do
-      post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
-      
       PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
       PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
       
