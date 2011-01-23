@@ -8,3 +8,4 @@ ActiveRecord::Base.establish_connection(
   :database => dir + '/db/test.sqlite3')
 
 require dir + '/../config/schema'
+require dir + '/factories'
