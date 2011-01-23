@@ -12,6 +12,10 @@ describe PopTrumps::Application do
     @gaga   = Factory(:artist, :name => "Lady Gaga")
     @sufjan = Factory(:artist, :name => "Sufjan Stevens")
     
+    PopTrumps::Artist.all.each_with_index do |artist, index|
+      artist.assign("stamina", index)
+    end
+    
     @alice  = Factory(:user, :lastfm_username => "alice")
     @bob    = Factory(:user, :lastfm_username => "bob")
   end
@@ -30,7 +34,8 @@ describe PopTrumps::Application do
         "name"  => "Imogen Heap",
         "stats" => {
           "releases" => 23,
-          "concerts" => 1024
+          "concerts" => 1024,
+          "stamina"  => 0
         }
       }
     end
@@ -85,8 +90,8 @@ describe PopTrumps::Application do
       
       it "messages the user who started the game" do
         PopTrumps::Messaging.should_receive(:publish).with(@alice, "start")
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "user" => "alice")
-        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "user" => "alice")
+        PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "alice")
+        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "alice")
         post "/games.json", :username => "bob"
       end
     end
@@ -109,6 +114,45 @@ describe PopTrumps::Application do
           "bob"   => 2
         }
       }
+    end
+  end
+  
+  describe "/games/:id/plays.json" do
+    before do
+      PopTrumps::Game.join(@alice)
+      @game = PopTrumps::Game.join(@bob)
+    end
+    
+    it "returns an error if an illegal move is made" do
+      post "/games/#{@game.id}/plays.json", :username => "bob", :artist_id => @justin.id, :stat => "stamina"
+      json.should == {"status" => "error"}
+    end
+    
+    it "lets the current player make a move" do
+      post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
+      json.should == {"status" => "ok"}
+    end
+    
+    it "notifies the waiting user of the play" do
+      PopTrumps::Messaging.should_receive(:publish).with(@bob, "play",
+                                                        "username" => "alice",
+                                                        "stat"     => "stamina",
+                                                        "value"    => 0)
+      
+      post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
+    end
+    
+    it "allows the waiting user to acknowledge the play" do
+      post "/games/#{@game.id}/plays.json", :username => "alice", :artist_id => @imogen.id, :stat => "stamina"
+      
+      PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
+      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
+      
+      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
+      PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+      
+      post "/games/#{@game.id}/ack.json", :username => "bob"
+      json.should == {"status" => "ok"}
     end
   end
 end

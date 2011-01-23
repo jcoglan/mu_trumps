@@ -37,6 +37,10 @@ module PopTrumps
     def current_artist_for(user)
       cards_for(user).first.artist
     end
+    
+    def waiting_user
+      users.select { |user| user != current_user }.first
+    end
 
     def play(user, artist, stat_name)
       raise PlayOutOfTurn unless user == current_user
