@@ -151,6 +151,11 @@ describe PopTrumps::Application do
     end
     
     it "allows the waiting user to acknowledge the play" do
+      post "/games/#{@game.id}/ack.json", :username => "bob"
+      json.should == {"status" => "ok"}
+    end
+    
+    it "notifies both players about the result of the round" do
       PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
       PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
       
@@ -158,7 +163,6 @@ describe PopTrumps::Application do
       PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
       
       post "/games/#{@game.id}/ack.json", :username => "bob"
-      json.should == {"status" => "ok"}
     end
   end
 end
