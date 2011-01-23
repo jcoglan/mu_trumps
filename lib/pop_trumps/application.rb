@@ -4,13 +4,6 @@ module PopTrumps
   class Application < Sinatra::Base
     
     helpers do
-      def game_status(game)
-        case game.users.count
-        when 1 then 'waiting'
-        when 2 then 'ready'
-        end
-      end
-      
       def return_json(hash)
         headers 'Content-Type' => 'application/json'
         JSON.dump(hash)
@@ -35,7 +28,7 @@ module PopTrumps
       cards = game.cards_for(user).map do |card|
         {'id' => card.artist.id, 'name' => card.artist.name}
       end
-      return_json('status' => game_status(game),
+      return_json('status' => game.status,
                   'id'     => game.id,
                   'cards'  => cards)
     end
@@ -44,7 +37,7 @@ module PopTrumps
       game   = Game.find(params[:id])
       scores = game.users.map { |u| [u.lastfm_username, game.cards_for(u).size] }
       
-      return_json('status'       => game_status(game),
+      return_json('status'       => game.status,
                   'id'           => game.id,
                   'current_user' => game.current_user.lastfm_username,
                   'users' => Hash[scores])

@@ -7,6 +7,8 @@ module PopTrumps
     before_create :generate_deck
     
     DECK_SIZE = 52
+    WAITING   = 'waiting'
+    READY     = 'ready'
     
     def self.join(user)
       game = last
@@ -27,6 +29,13 @@ module PopTrumps
     
     def cards_for(user)
       cards.select { |card| card.user == user }
+    end
+    
+    def status
+      case users.count
+      when 1 then WAITING
+      when 2 then READY
+      end
     end
     
   private

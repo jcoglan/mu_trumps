@@ -24,6 +24,10 @@ describe PopTrumps::Game do
         game.users.should == [alice]
       end
       
+      it "returns a game in the waiting state" do
+        game.status.should == "waiting"
+      end
+      
       it "assigns half the game deck to the user" do
         game.cards_for(alice).map { |c| c.artist.name }.should == ["Imogen Heap", "Lady Gaga"]
       end
@@ -39,6 +43,10 @@ describe PopTrumps::Game do
       it "returns the waiting game with two participants" do
         game.should == @existing_game
         game.users.should == [alice, bob]
+      end
+      
+      it "returns a game in the ready state" do
+        game.status.should == "ready"
       end
       
       it "assigns the other half of the game deck to the user" do
