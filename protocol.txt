@@ -19,6 +19,10 @@ GET /artists/:id.json
 }
 
 
+POST /users/register.json :: username=jcoglan
+{"id": 1, "username": "jcoglan"}
+
+
 POST /games.json :: username=jcoglan
 {
   "status": "waiting|ready|error",
