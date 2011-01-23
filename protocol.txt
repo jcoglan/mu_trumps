@@ -19,13 +19,9 @@ GET /artists/:id.json
 }
 
 
-POST /games.json
-{"id": 3}
-
-
-POST /games/:id/users.json :: username=jcoglan
+POST /games.json :: username=jcoglan
 {
-  "status": "ok|error",
+  "status": "waiting|ready|error",
   "cards": [
     {"id": 1, "name": "Imogen Heap"},
     ...
@@ -51,7 +47,10 @@ POST /games/:id/plays.json :: username=jcoglan, artist_id=45, stat=releases
 {"status": "ok|error"}
 
 
-GET (long-poll) /games/:id/messages/:username.json
+GET (long-poll) /messages/:username.json
+{
+  "event":    "start"
+}
 {
   "event":    "play",
   "username": "gideonb",
