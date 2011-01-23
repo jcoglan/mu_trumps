@@ -51,7 +51,7 @@ POST /games/:id/plays.json :: username=jcoglan, artist_id=45, stat=releases
 {"status": "ok|error"}
 
 
-GET (long-poll) /messages/:username.json
+GET (long-poll) /messages/:username
 {
   "event":    "start"
 }
