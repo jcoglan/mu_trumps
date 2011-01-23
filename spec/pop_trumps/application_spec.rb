@@ -1,24 +1,31 @@
-require 'capybara/dsl'
+require 'rack/test'
 require 'spec_helper'
 
 describe PopTrumps::Application do
-  include Capybara
+  include Rack::Test::Methods
+  let(:app)  { PopTrumps::Application.new }
+  let(:json) { JSON.parse(last_response.body) }
   
   before do
-    Capybara.default_driver = :rack_test
-    Capybara.app = PopTrumps::Application.new
+    @imogen = Factory(:artist, :name => "Imogen Heap", :id => 100)
+    @justin = Factory(:artist, :name => "Justin Bieber")
+    @gaga   = Factory(:artist, :name => "Lady Gaga")
+    @sufjan = Factory(:artist, :name => "Sufjan Stevens")
+    
+    @alice  = Factory(:user, :lastfm_username => "alice")
+    @bob    = Factory(:user, :lastfm_username => "bob")
   end
   
   describe "/artists/:id" do
     before do
-      artist = Factory(:artist, :id => 100, :name => "Imogen Heap")
+      artist = @imogen
       artist.assign("releases", 23)
       artist.assign("concerts", 1024)
     end
     
     it "returns details for an artist" do
-      visit "/artists/100.json"
-      JSON.parse(body).should == {
+      get "/artists/100.json"
+      json.should == {
         "id"    => 100,
         "name"  => "Imogen Heap",
         "stats" => {
@@ -26,6 +33,38 @@ describe PopTrumps::Application do
           "concerts" => 1024
         }
       }
+    end
+  end
+  
+  describe "/games.json" do
+    describe "with no waiting games" do
+      it "creates a waiting game and returns the user's cards" do
+        post "/games.json", :username => "alice"
+        json.should == {
+          "status" => "waiting",
+          "cards"  => [
+            {"id" => @imogen.id, "name" => @imogen.name},
+            {"id" => @gaga.id,   "name" => @gaga.name  }
+          ]
+        }
+      end
+    end
+    
+    describe "with a waiting game" do
+      before do
+        game = PopTrumps::Game.join(@alice)
+      end
+      
+      it "makes the game ready and returns the user's cards" do
+        post "/games.json", :username => "bob"
+        json.should == {
+          "status" => "ready",
+          "cards"  => [
+            {"id" => @justin.id, "name" => @justin.name},
+            {"id" => @sufjan.id, "name" => @sufjan.name}
+          ]
+        }
+      end
     end
   end
 end
