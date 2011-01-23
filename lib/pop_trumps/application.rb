@@ -29,6 +29,9 @@ module PopTrumps
       
       if game.users.size == 2
         Messaging.publish(game.users.first, "start")
+        game.users.each do |user|
+          Messaging.publish(user, "current_user", "user" => game.current_user.lastfm_username)
+        end
       end
       
       cards = game.cards_for(user).map do |card|

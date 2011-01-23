@@ -9,9 +9,9 @@ module PopTrumps
       @instance = super(*args)
     end
     
-    def self.publish(user, event)
+    def self.publish(user, event, params = {})
       return unless @instance
-      @instance.publish(user, event)
+      @instance.publish(user, event, params)
     end
     
     def initialize(options = {})
@@ -20,10 +20,13 @@ module PopTrumps
       @connections = {}
     end
     
-    def publish(user, event)
+    def publish(user, event, params = {})
       username = user.lastfm_username
+      message  = params.merge('event' => event)
+      
       @channels[username] ||= []
-      @channels[username].push('event' => event)
+      @channels[username].push(message)
+      
       flush(username)
     end
     

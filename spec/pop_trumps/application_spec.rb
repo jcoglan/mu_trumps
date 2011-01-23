@@ -85,6 +85,8 @@ describe PopTrumps::Application do
       
       it "messages the user who started the game" do
         PopTrumps::Messaging.should_receive(:publish).with(@alice, "start")
+        PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "user" => "alice")
+        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "user" => "alice")
         post "/games.json", :username => "bob"
       end
     end
