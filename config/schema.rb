@@ -20,6 +20,7 @@ ActiveRecord::Schema.define do
     t.belongs_to :user
     t.integer    :position
   end
+  add_index :cards, [:game_id, :position]
   
   create_table :games, :force => true do |t|
     t.timestamps
