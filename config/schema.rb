@@ -16,6 +16,7 @@ ActiveRecord::Schema.define do
     t.timestamps
     t.belongs_to :artist
     t.belongs_to :game
+    t.belongs_to :user
   end
   
   create_table :games, :force => true do |t|

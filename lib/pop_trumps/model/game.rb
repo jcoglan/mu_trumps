@@ -1,7 +1,7 @@
 module PopTrumps
   class Game < ActiveRecord::Base
     has_many :cards
-    has_and_belongs_to_many :users
+    has_and_belongs_to_many :users, :uniq => true
     
     before_create :generate_deck
     
@@ -10,8 +10,20 @@ module PopTrumps
     def self.join(user)
       game = last
       game = create unless game and game.users.size == 1
-      game.users << user
+      game.add_player(user)
       game
+    end
+    
+    def add_player(user)
+      cards.each_with_index do |card, index|
+        next unless (users.empty? and index.even?) or (not users.empty? and index.odd?)
+        card.update_attribute(:user, user)
+      end
+      users << user
+    end
+    
+    def cards_for(user)
+      cards.select { |card| card.user == user }
     end
     
   private
