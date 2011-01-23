@@ -97,5 +97,11 @@ module PopTrumps
       end
     end
     
+    get '/poke/:username/:event' do
+      user   = User.find_by_lastfm_username(params[:username])
+      Messaging.publish(user, params[:event])
+      return_json('status' => 'ok')
+    end
+    
   end
 end
