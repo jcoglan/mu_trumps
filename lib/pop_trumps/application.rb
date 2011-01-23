@@ -24,6 +24,11 @@ module PopTrumps
                   'stats' => artist.stats)
     end
     
+    post '/users/register.json' do
+      user = User.find_or_create_by_lastfm_username(params[:username])
+      return_json('id' => user.id, 'username' => user.lastfm_username)
+    end
+    
     post '/games.json' do
       user  = User.find_by_lastfm_username(params[:username])
       game  = Game.join(user)

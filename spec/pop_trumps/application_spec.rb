@@ -36,6 +36,20 @@ describe PopTrumps::Application do
     end
   end
   
+  describe "/users/register.json" do
+    it "returns an existing user" do
+      post "/users/register.json", :username => "alice"
+      json.should == {"id" => @alice.id, "username" => "alice"}
+    end
+    
+    it "creates a new user" do
+      PopTrumps::User.find_by_lastfm_username("cecil").should be_nil
+      post "/users/register.json", :username => "cecil"
+      cecil = PopTrumps::User.find_by_lastfm_username("cecil")
+      json.should == {"id" => cecil.id, "username" => "cecil"}
+    end
+  end
+  
   describe "/games.json" do
     describe "with no waiting games" do
       it "creates a waiting game and returns the user's cards" do
