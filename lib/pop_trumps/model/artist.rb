@@ -3,6 +3,10 @@ module PopTrumps
     has_many :statistics
     validates_presence_of :name
     
+    def self.random(n)
+      all[0...n]
+    end
+    
     def assign(stat, value)
       statistic = statistics.find_or_create_by_name(stat)
       statistic.update_attribute(:value, value)
