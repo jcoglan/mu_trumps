@@ -2,6 +2,7 @@ ActiveRecord::Schema.define do
   create_table :artists, :force => true do |t|
     t.timestamps
     t.string :name
+    t.string :image_url
   end
   add_index :artists, :name
   

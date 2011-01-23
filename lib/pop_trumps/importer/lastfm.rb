@@ -15,8 +15,16 @@ module PopTrumps
       
       def import_top_artists
         json = get_data('user.gettopartists', :user => @username)
-        json['topartists']['artist'].each do |artist|
-          artist = Artist.find_or_create_by_name(artist['name'])
+        json['topartists']['artist'].each do |lfmartist|
+          artist = Artist.find_or_create_by_name(lfmartist['name'])
+
+          #This presumes that the images are in order of size
+          #smallest -> largest and we take the largest.
+          if( lfmartist['image'] && lfmartist['image'].length ) then
+            artist.image_url = lfmartist['image'].last['#text']
+          end
+
+          artist.save
           log("Imported #{artist.name}")
         end
       end

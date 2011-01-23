@@ -59,8 +59,8 @@ describe PopTrumps::Application do
           "status" => "waiting",
           "id"     => game_id,
           "cards"  => [
-            {"id" => @imogen.id, "name" => @imogen.name},
-            {"id" => @gaga.id,   "name" => @gaga.name  }
+            {"id" => @imogen.id, "name" => @imogen.name, "image" => @imogen.image_url},
+            {"id" => @gaga.id,   "name" => @gaga.name, "image" => @gaga.image_url }
           ]
         }
       end
@@ -77,8 +77,8 @@ describe PopTrumps::Application do
           "status" => "ready",
           "id"     => @game.id,
           "cards"  => [
-            {"id" => @justin.id, "name" => @justin.name},
-            {"id" => @sufjan.id, "name" => @sufjan.name}
+            {"id" => @justin.id, "name" => @justin.name, "image" => @imogen.image_url},
+            {"id" => @sufjan.id, "name" => @sufjan.name, "image" => @imogen.image_url}
           ]
         }
       end

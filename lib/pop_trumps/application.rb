@@ -32,7 +32,7 @@ module PopTrumps
       end
       
       cards = game.cards_for(user).map do |card|
-        {'id' => card.artist.id, 'name' => card.artist.name}
+        {'id' => card.artist.id, 'name' => card.artist.name, 'image' => card.artist.image_url}
       end
       return_json('status' => game.status,
                   'id'     => game.id,
