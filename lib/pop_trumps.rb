@@ -1,5 +1,3 @@
-require 'active_record'
-
 module PopTrumps
   ROOT = File.expand_path(File.dirname(__FILE__))
   
@@ -11,3 +9,5 @@ module PopTrumps
   
   autoload :Application, ROOT + '/pop_trumps/application'
 end
+
+require PopTrumps::ROOT + '/../config/environment'
