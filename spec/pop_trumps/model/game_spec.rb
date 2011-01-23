@@ -87,13 +87,18 @@ describe PopTrumps::Game do
 
   describe "round_won_by" do
     before do
-      PopTrumps::Game.join(alice)
-      @game = PopTrumps::Game.join(bob)
+      PopTrumps::Game.join(bob)
+      @game = PopTrumps::Game.join(alice)
     end
 
     it "transfers both current cards to the deck of the winner" do
       @game.round_won_by(alice)
-      @game.cards_for(alice).map(&:artist).should == [@gaga, @justin, @imogen]
+      @game.cards_for(alice).map(&:artist).should == [@sufjan, @imogen, @justin]
+    end
+    
+    it "makes the winner of the round the current player" do
+      @game.round_won_by(alice)
+      @game.current_user.should == alice
     end
   end
 end

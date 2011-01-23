@@ -51,6 +51,7 @@ module PopTrumps
         card.update_attribute(:user, winner)
         card.move_to_bottom
       end
+      update_attribute(:current_user, winner)
       reload
     end
 
