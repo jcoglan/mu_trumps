@@ -54,8 +54,10 @@ describe PopTrumps::Application do
     describe "with no waiting games" do
       it "creates a waiting game and returns the user's cards" do
         post "/games.json", :username => "alice"
+        game_id = PopTrumps::Game.first.id
         json.should == {
           "status" => "waiting",
+          "id"     => game_id,
           "cards"  => [
             {"id" => @imogen.id, "name" => @imogen.name},
             {"id" => @gaga.id,   "name" => @gaga.name  }
@@ -66,19 +68,40 @@ describe PopTrumps::Application do
     
     describe "with a waiting game" do
       before do
-        game = PopTrumps::Game.join(@alice)
+        @game = PopTrumps::Game.join(@alice)
       end
       
       it "makes the game ready and returns the user's cards" do
         post "/games.json", :username => "bob"
         json.should == {
           "status" => "ready",
+          "id"     => @game.id,
           "cards"  => [
             {"id" => @justin.id, "name" => @justin.name},
             {"id" => @sufjan.id, "name" => @sufjan.name}
           ]
         }
       end
+    end
+  end
+  
+  describe "/games/:id.json" do
+    before do
+      @game = PopTrumps::Game.join(@alice)
+      PopTrumps::Game.join(@bob)
+    end
+    
+    it "returns the state of the game" do
+      get "/games/#{@game.id}.json"
+      json.should == {
+        "status"       => "ready",
+        "id"           => @game.id,
+        "current_user" => "alice",
+        "users" => {
+          "alice" => 2,
+          "bob"   => 2
+        }
+      }
     end
   end
 end

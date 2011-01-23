@@ -2,6 +2,7 @@ module PopTrumps
   class Game < ActiveRecord::Base
     has_many :cards
     has_and_belongs_to_many :users, :uniq => true
+    belongs_to :current_user, :class_name => 'PopTrumps::User'
     
     before_create :generate_deck
     
@@ -20,6 +21,8 @@ module PopTrumps
         card.update_attribute(:user, user)
       end
       users << user
+      self.current_user ||= user
+      save
     end
     
     def cards_for(user)

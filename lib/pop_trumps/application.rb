@@ -35,7 +35,19 @@ module PopTrumps
       cards = game.cards_for(user).map do |card|
         {'id' => card.artist.id, 'name' => card.artist.name}
       end
-      return_json('status' => game_status(game), 'cards' => cards)
+      return_json('status' => game_status(game),
+                  'id'     => game.id,
+                  'cards'  => cards)
+    end
+    
+    get '/games/:id.json' do
+      game   = Game.find(params[:id])
+      scores = game.users.map { |u| [u.lastfm_username, game.cards_for(u).size] }
+      
+      return_json('status'       => game_status(game),
+                  'id'           => game.id,
+                  'current_user' => game.current_user.lastfm_username,
+                  'users' => Hash[scores])
     end
     
   end
