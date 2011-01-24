@@ -30,10 +30,10 @@ module PopTrumps
       
       get '/artists/:id.json' do
         artist = Artist.find(params[:id])
-        return_json('id'    => artist.id,
-        'name'        => artist.name,
-        'identifiers' => artist.ids,
-        'stats'       => artist.stats)
+        return_json('id'          => artist.id,
+                    'name'        => artist.name,
+                    'identifiers' => artist.ids,
+                    'stats'       => artist.stats)
       end
       
       post '/users/register.json' do
@@ -51,8 +51,8 @@ module PopTrumps
         end
         
         return_json('status' => game.status,
-        'id'     => game.id,
-        'cards'  => cards_for_user(game, user))
+                    'id'     => game.id,
+                    'cards'  => cards_for_user(game, user))
       end
       
       get '/games/:id.json' do
@@ -60,9 +60,9 @@ module PopTrumps
         scores = game.users.map { |u| [u.lastfm_username, game.cards_for(u).size] }
         
         return_json('status'       => game.status,
-        'id'           => game.id,
-        'current_user' => game.current_user.lastfm_username,
-        'users'        => Hash[scores])
+                    'id'           => game.id,
+                    'current_user' => game.current_user.lastfm_username,
+                    'users'        => Hash[scores])
       end
       
       get '/games/:id/cards/:username.json' do
@@ -81,9 +81,9 @@ module PopTrumps
           game.play(user, artist, stat)
           
           Messaging.publish(game.waiting_user, 'play',
-          'username' => user.lastfm_username,
-          'stat'     => stat,
-          'value'    => artist.stats[stat])
+                            'username' => user.lastfm_username,
+                            'stat'     => stat,
+                            'value'    => artist.stats[stat])
           
           return_json('status' => 'ok')
         rescue
