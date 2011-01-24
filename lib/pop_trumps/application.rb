@@ -103,7 +103,13 @@ module PopTrumps
           Messaging.publish(user, 'cards', 'cards' => cards_for_user(game, user))
         end
         
-        notify_current_user(game)
+        if winner = game.winner
+          game.users.each do |user|
+            Messaging.publish(user, 'winner', 'username' => winner.lastfm_username)
+          end
+        else
+          notify_current_user(game)
+        end
         
         return_json('status' => 'ok')
       rescue

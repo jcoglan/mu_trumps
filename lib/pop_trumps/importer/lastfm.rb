@@ -1,8 +1,3 @@
-require 'uri'
-require 'cgi'
-require 'net/http'
-require 'json'
-
 module PopTrumps
   module Importer
     

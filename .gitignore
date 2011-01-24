@@ -1,3 +1,4 @@
 *.sqlite3
+*.sql
 .DS_Store
 .redcar

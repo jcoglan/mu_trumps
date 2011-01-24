@@ -168,7 +168,7 @@ describe PopTrumps::Application do
     it "notifies both players about the result of the round" do
       PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
       PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
-      
+
       PopTrumps::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
           artist_json(@sufjan), artist_json(@imogen), artist_json(@justin)
         ])
@@ -181,6 +181,29 @@ describe PopTrumps::Application do
       PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
       
       post "/games/#{@game.id}/ack.json", :username => "bob"
+    end
+    
+    describe "when the move results in game over" do
+      before do
+        post "/games/#{@game.id}/ack.json", :username => "bob"
+        post "/games/#{@game.id}/plays.json", :username => "bob", :artist_id => @sufjan.id, :stat => "stamina"
+      end
+      
+      it "notifies both players about the result of the round" do
+        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
+        PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+        
+        PopTrumps::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+            artist_json(@imogen), artist_json(@justin), artist_json(@gaga), artist_json(@sufjan)
+          ])
+          
+        PopTrumps::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [])
+          
+        PopTrumps::Messaging.should_receive(:publish).with(@alice, "winner", "username" => "bob")
+        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "winner", "username" => "bob")
+        
+        post "/games/#{@game.id}/ack.json", :username => "alice"
+      end
     end
   end
 end

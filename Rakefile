@@ -8,6 +8,22 @@ namespace :import do
       importer.import_top_artists
     end
   end
+  
+  namespace :echonest do
+    task :hotttnesss do
+      PopTrumps::Artist.all.each do |artist|
+        importer = PopTrumps::Importer::Echonest.new(artist)
+        importer.import_hotttnesss
+      end
+    end
+    
+    task :familiarity do
+      PopTrumps::Artist.all.each do |artist|
+        importer = PopTrumps::Importer::Echonest.new(artist)
+        importer.import_familiarity
+      end
+    end
+  end
 end
 
 namespace :db do

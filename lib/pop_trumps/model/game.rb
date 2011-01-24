@@ -70,6 +70,11 @@ module PopTrumps
       update_attribute(:current_user, winner)
       reload
     end
+    
+    def winner
+      remaining = users.select { |u| cards_for(u).size > 0 }
+      remaining.size == 1 ? remaining.first : nil
+    end
 
     def status
       case users.count
