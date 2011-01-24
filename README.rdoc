@@ -5,7 +5,7 @@ Midem conference in Cannes.
 
 To run the server, you need Ruby and these gems:
 
-  gem install rack thin json sinatra activerecord acts_as_list sqlite3
+  gem install rack thin json sinatra nokogiri activerecord acts_as_list sqlite3
 
 Initialize the database:
 
@@ -21,6 +21,7 @@ And run the server:
   rake import:lastfm:top_artists[username]
   rake import:echonest:hotttnesss
   rake import:echonest:familiarity
+  rake import:seven_digital:ids
 
 
 === Testing

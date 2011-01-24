@@ -4,6 +4,7 @@ module PopTrumps
   autoload :Artist,      ROOT + '/pop_trumps/model/artist'
   autoload :Card,        ROOT + '/pop_trumps/model/card'
   autoload :Game,        ROOT + '/pop_trumps/model/game'
+  autoload :Identifier,  ROOT + '/pop_trumps/model/identifier'
   autoload :Statistic,   ROOT + '/pop_trumps/model/statistic'
   autoload :User,        ROOT + '/pop_trumps/model/user'
   

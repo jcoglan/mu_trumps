@@ -24,6 +24,15 @@ namespace :import do
       end
     end
   end
+
+  namespace :seven_digital do
+    task :ids do
+      PopTrumps::Artist.all.each do |artist|
+        importer = PopTrumps::Importer::SevenDigital.new(artist)
+        importer.import_identifier
+      end
+    end
+  end
 end
 
 namespace :db do
