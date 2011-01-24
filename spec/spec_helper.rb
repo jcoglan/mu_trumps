@@ -25,6 +25,9 @@ FakeWeb.register_uri(:get, 'http://developer.echonest.com/api/v4/artist/hotttnes
 FakeWeb.register_uri(:get, 'http://developer.echonest.com/api/v4/artist/familiarity?api_key=WDYWSAVVILHXV5RHT&id=AR7W7171187B9A8842&format=json',
                      :body => File.read(dir + '/fixtures/familiarity.json'))
 
+FakeWeb.register_uri(:get, 'http://api.7digital.com/1.2/artist/search?q=Imogen+Heap&oauth_consumer_key=7de69j69ya&country=GB',
+                     :body => File.read(dir + '/fixtures/7digital.xml'))
+
 RSpec.configure do |config|
   config.after do
     ObjectSpace.each_object(Class) do |klass|
