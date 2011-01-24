@@ -19,6 +19,7 @@ from time import sleep, strftime
 import sqlite3
 
 SLEEP_TIME = 1.4
+VERBOSE = False
 
 def main(argv=None):
 	if argv==None:
@@ -45,7 +46,8 @@ def main(argv=None):
 		except IndexError:
 			print "Could not find a musicbrainz id for the artist", artist_name, "moving on..."
 			continue
-		print "For artist", artist_name, "found id", artist_id
+		if VERBOSE:
+			print "For artist", artist_name, "found id", artist_id
 		try:
 			# The result should include all official albums.
 			#
@@ -57,7 +59,8 @@ def main(argv=None):
 			print 'Error:', e
 			continue
 		album_count = len(artist.getReleases())
-		print "\thas released", album_count,"albums."
+		if VERBOSE:
+			print "\thas released", album_count,"albums."
 		try:
 			# The result should include all official albums.
 			#
@@ -69,7 +72,8 @@ def main(argv=None):
 			print 'Error:', e
 			continue
 		single_count = len(artist.getReleases())
-		print "\thas released", single_count,"singles."
+		if VERBOSE:
+			print "\thas released", single_count,"singles."
 		insert_cursor.execute("""select * from statistics where artist_id = %i and name = 'albums'"""%artist_id)
 		if len(list(insert_cursor)) == 0:
 			insert_cursor.execute(\
@@ -97,10 +101,10 @@ def main(argv=None):
 			"""update statistics set "updated_at" = '%s', "value" = '%i'\
 			 where artist_id = %i and name = 'album'"""%(strftime("%Y-%m-%d %H:%M:%S"), single_count, artist_id))
 		conn.commit()
-		
-		
+		if VERBOSE:
+			print "values updated/inserted."
 		sleep(SLEEP_TIME)
-
+	conn.close()
 
 if __name__ == '__main__':
 	main()
