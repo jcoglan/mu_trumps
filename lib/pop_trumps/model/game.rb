@@ -51,7 +51,9 @@ module PopTrumps
     def ack(user)
       raise PlayOutOfTurn unless user != current_user
       attack, defense = [current_user, user].map { |u| current_artist_for(u).stats[current_stat] }
-      if attack > defense
+      if defense.nil?
+        round_won_by(current_user)
+      elsif attack > defense
         round_won_by(current_user)
       elsif defense > attack
         round_won_by(user)

@@ -96,6 +96,18 @@ describe PopTrumps::Game do
       @game.ack(bob)
       @game.current_stat.should be_nil
     end
+    
+    describe "when the attacker uses a stat the defense does not have" do
+      before do
+        @imogen.assign("soundcloud_meetings", 1)
+      end
+      
+      it "lets the attacker win" do
+        @game.play(alice, @imogen, "soundcloud_meetings")
+        @game.should_receive(:round_won_by).with(alice)
+        @game.ack(bob)
+      end
+    end
   end
 
   describe "round_won_by" do
