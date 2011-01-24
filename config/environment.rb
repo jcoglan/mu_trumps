@@ -8,4 +8,4 @@ FileUtils.mkdir_p(dir + '/../db')
 
 ActiveRecord::Base.establish_connection(
   :adapter  => 'sqlite3',
-  :database => dir + '/../db/pop_trumps.sqlite3')
+  :database => dir + '/../db/mu_trumps.sqlite3')

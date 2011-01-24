@@ -1,7 +1,9 @@
-= PopTrumps
+= µTrumps
 
-This is the web service for a Pop Trumps game built at Music Hack Day, at the
-Midem conference in Cannes.
+This is the web service for µTrumps, a game built at Music Hack Day, at the
+Midem conference in Cannes. It was built by James[http://github.com/jcoglan],
+Jono[http://github.com/jonocole], Ben[http://github.com/gearmonkey],
+Joris[http://twitter.com/joriszaalberg] and Gideon[http://twitter.com/gideonb].
 
 To run the server, you need Ruby and these gems:
 
