@@ -18,7 +18,7 @@ from time import sleep, strftime
 
 import sqlite3
 
-SLEEP_TIME = 1
+SLEEP_TIME = 1.4
 
 def main(argv=None):
 	if argv==None:
@@ -68,23 +68,37 @@ def main(argv=None):
 		except ws.WebServiceError, e:
 			print 'Error:', e
 			continue
-		album_count = len(artist.getReleases())
-		print "\thas released", album_count,"singles."
-		insert_cursor.execute("""select * from statistics where artist_id = %i and name = 'album'"""%artist_id)
+		single_count = len(artist.getReleases())
+		print "\thas released", single_count,"singles."
+		insert_cursor.execute("""select * from statistics where artist_id = %i and name = 'albums'"""%artist_id)
 		if len(list(insert_cursor)) == 0:
-		# "created_at" 2011-01-24 01:29:47.621459, "updated_at" datetime, "artist_id" integer, "name" varchar(255), "value" float
 			insert_cursor.execute(\
 				"""insert into statistics ("created_at","updated_at", "artist_id", "name", "value") \
 				values ('%s','%s',%i,'%s',%i)"""%(strftime("%Y-%m-%d %H:%M:%S"),
 										strftime("%Y-%m-%d %H:%M:%S"),
 										artist_id, 
-										'album', 
+										'albums', 
 										album_count))
 		else:
 			insert_cursor.execute(\
-			"""update statistic set "updated_at" = '%s', "value" = '%i')\
-			 where artist_id = %i and name = 'album'"""%(strftime("%Y-%m-%d %H:%M:%S"), album_count))
+			"""update statistics set "updated_at" = '%s', "value" = %i\
+			 where artist_id = %i and name = 'album'"""%(strftime("%Y-%m-%d %H:%M:%S"), album_count, artist_id))
+		insert_cursor.execute("""select * from statistics where artist_id = %i and name = 'singles'"""%artist_id)
+		if len(list(insert_cursor)) == 0:
+			insert_cursor.execute(\
+				"""insert into statistics ("created_at","updated_at", "artist_id", "name", "value") \
+				values ('%s','%s',%i,'%s',%i)"""%(strftime("%Y-%m-%d %H:%M:%S"),
+										strftime("%Y-%m-%d %H:%M:%S"),
+										artist_id, 
+										'singles', 
+										single_count))
+		else:
+			insert_cursor.execute(\
+			"""update statistics set "updated_at" = '%s', "value" = '%i'\
+			 where artist_id = %i and name = 'album'"""%(strftime("%Y-%m-%d %H:%M:%S"), single_count, artist_id))
 		conn.commit()
+		
+		
 		sleep(SLEEP_TIME)
 
 
