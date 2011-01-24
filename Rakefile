@@ -1,9 +1,9 @@
-require './lib/pop_trumps'
+require './lib/mu_trumps'
 
 namespace :import do
   namespace :lastfm do
     task :top_artists, :username do |t, args|
-      importer = PopTrumps::Importer::Lastfm.new(args.username)
+      importer = MuTrumps::Importer::Lastfm.new(args.username)
       importer.logger { |s| puts s }
       importer.import_top_artists
     end
@@ -11,15 +11,15 @@ namespace :import do
   
   namespace :echonest do
     task :hotttnesss do
-      PopTrumps::Artist.all.each do |artist|
-        importer = PopTrumps::Importer::Echonest.new(artist)
+      MuTrumps::Artist.all.each do |artist|
+        importer = MuTrumps::Importer::Echonest.new(artist)
         importer.import_hotttnesss
       end
     end
     
     task :familiarity do
-      PopTrumps::Artist.all.each do |artist|
-        importer = PopTrumps::Importer::Echonest.new(artist)
+      MuTrumps::Artist.all.each do |artist|
+        importer = MuTrumps::Importer::Echonest.new(artist)
         importer.import_familiarity
       end
     end
@@ -27,8 +27,8 @@ namespace :import do
 
   namespace :seven_digital do
     task :ids do
-      PopTrumps::Artist.all.each do |artist|
-        importer = PopTrumps::Importer::SevenDigital.new(artist)
+      MuTrumps::Artist.all.each do |artist|
+        importer = MuTrumps::Importer::SevenDigital.new(artist)
         importer.import_identifier
       end
     end

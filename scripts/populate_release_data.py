@@ -27,7 +27,7 @@ def main(argv=None):
 	
 	q = Query()
 	
-	conn = sqlite3.connect('db/pop_trumps.sqlite3')
+	conn = sqlite3.connect('db/mu_trumps.sqlite3')
 	c = conn.cursor()
 	insert_cursor = conn.cursor()
 	c.execute('select * from artists')

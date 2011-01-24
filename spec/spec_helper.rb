@@ -1,5 +1,5 @@
 dir = File.expand_path(File.dirname(__FILE__))
-require dir + '/../lib/pop_trumps'
+require dir + '/../lib/mu_trumps'
 
 require 'fileutils'
 FileUtils.mkdir_p(dir + '/db')
