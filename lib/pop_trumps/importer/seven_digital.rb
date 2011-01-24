@@ -16,6 +16,7 @@ module PopTrumps
         id       = doc.search('artist').first['id']
 
         @artist.identifiers << Identifier.new(:name => '7digital', :value => id)
+      rescue
       end
 
       def api_key

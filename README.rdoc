@@ -21,6 +21,7 @@ And run the server:
   rake import:lastfm:top_artists[username]
   rake import:echonest:hotttnesss
   rake import:echonest:familiarity
+  rake import:seven_digital:ids
 
 
 === Testing

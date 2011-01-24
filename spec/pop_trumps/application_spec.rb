@@ -29,6 +29,8 @@ describe PopTrumps::Web::Application do
       artist = @imogen
       artist.assign("releases", 23)
       artist.assign("concerts", 1024)
+
+      artist.identifiers << PopTrumps::Identifier.new(:name => "7digital", :value => "8321")
     end
     
     it "returns details for an artist" do
@@ -36,6 +38,9 @@ describe PopTrumps::Web::Application do
       json.should == {
         "id"    => 100,
         "name"  => "Imogen Heap",
+        "identifiers" => {
+          "7digital" => "8321"
+        },
         "stats" => {
           "releases" => 23,
           "concerts" => 1024,

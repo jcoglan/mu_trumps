@@ -31,8 +31,9 @@ module PopTrumps
       get '/artists/:id.json' do
         artist = Artist.find(params[:id])
         return_json('id'    => artist.id,
-        'name'  => artist.name,
-        'stats' => artist.stats)
+        'name'        => artist.name,
+        'identifiers' => artist.ids,
+        'stats'       => artist.stats)
       end
       
       post '/users/register.json' do
