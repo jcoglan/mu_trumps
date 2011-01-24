@@ -34,8 +34,14 @@ module MuTrumps
       def call(env)
         request  = Rack::Request.new(env)
         username = request.path_info.split('/')[1]
-        response = Response.new
         
+        # This is basically a message queue so we don't want to let
+        # other connections come in and eat the user's queue!
+        if @connections.has_key?(username)
+          return [200, TYPE_JSON, ['[]']]
+        end
+        
+        response = Response.new
         callback = env['async.callback']
         callback.call [200, TYPE_JSON, response]
         
