@@ -18,9 +18,9 @@ And run the server:
 
 === Tasks
 
-To import a Last.fm user's top artists:
-
   rake import:lastfm:top_artists[username]
+  rake import:echonest:hotttnesss
+  rake import:echonest:familiarity
 
 
 === Testing
