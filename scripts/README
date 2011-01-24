@@ -1,0 +1,13 @@
+dependencies for these python scripts:
+--------------------------------------
+- python-musicbrainz2
+	1) download the tarball source: http://ftp.musicbrainz.org/pub/musicbrainz/python-musicbrainz2/python-musicbrainz2-0.7.2.tar.gz
+		and untar it. 
+		---or---
+	  check out the subversion repostiory:
+		$svn co http://svn.musicbrainz.org/python-musicbrainz2/trunk python-musicbrainz2
+	
+	2) $cd python-musicbrainz2
+	3) $python setup.py install
+		--note that if you have an exciting python installation 
+		  you may need to modify the install command
