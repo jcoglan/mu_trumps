@@ -71,6 +71,9 @@ GET (long-poll) /messages/:username
 }
 {
   "event":    "result",
-  "winner":   "jcoglan"
+  "result":   "win|lose"
 }
-
+{
+  "event":    "winner",
+  "username": "gideonb"
+}
