@@ -19,7 +19,7 @@ from time import sleep, strftime
 import sqlite3
 
 SLEEP_TIME = 1.4
-VERBOSE = False
+VERBOSE = True
 
 def main(argv=None):
 	if argv==None:
@@ -40,6 +40,9 @@ def main(argv=None):
 			artistResults = q.getArtists(f)
 		except WebServiceError, e:
 			print 'Error:', e
+			if "HTTP Error 503" in str(e):
+				print "taking a rest..."
+				sleep(SLEEP_TIME*10)
 			continue
 		try:
 			mbz_id = artistResults[0].artist.id
@@ -57,6 +60,9 @@ def main(argv=None):
 			artist = q.getArtistById(mbz_id, inc)
 		except ws.WebServiceError, e:
 			print 'Error:', e
+			if "HTTP Error 503" in str(e):
+				print "taking a rest..."
+				sleep(SLEEP_TIME*10)
 			continue
 		album_count = len(artist.getReleases())
 		if VERBOSE:
@@ -70,6 +76,9 @@ def main(argv=None):
 			artist = q.getArtistById(mbz_id, inc)
 		except ws.WebServiceError, e:
 			print 'Error:', e
+			if "HTTP Error 503" in str(e):
+				print "taking a rest..."
+				sleep(SLEEP_TIME*10)
 			continue
 		single_count = len(artist.getReleases())
 		if VERBOSE:
