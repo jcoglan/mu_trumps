@@ -1,9 +1,9 @@
 require 'rack/test'
 require 'spec_helper'
 
-describe PopTrumps::Application do
+describe PopTrumps::Web::Application do
   include Rack::Test::Methods
-  let(:app)  { PopTrumps::Application.new }
+  let(:app)  { PopTrumps::Web::Application.new }
   let(:json) { JSON.parse(last_response.body) }
   
   def artist_json(artist)
@@ -87,9 +87,9 @@ describe PopTrumps::Application do
       end
       
       it "messages the user who started the game" do
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "start")
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "alice")
-        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "alice")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "start")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "alice")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "alice")
         post "/games.json", :username => "bob"
       end
     end
@@ -144,7 +144,7 @@ describe PopTrumps::Application do
     end
     
     it "notifies the waiting user of the play" do
-      PopTrumps::Messaging.should_receive(:publish).with(@bob, "play",
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@bob, "play",
                                                         "username" => "alice",
                                                         "stat"     => "stamina",
                                                         "value"    => 0)
@@ -166,19 +166,19 @@ describe PopTrumps::Application do
     end
     
     it "notifies both players about the result of the round" do
-      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
-      PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
 
-      PopTrumps::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
           artist_json(@sufjan), artist_json(@imogen), artist_json(@justin)
         ])
       
-      PopTrumps::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [
           artist_json(@gaga)
         ])
       
-      PopTrumps::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
-      PopTrumps::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
+      PopTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
       
       post "/games/#{@game.id}/ack.json", :username => "bob"
     end
@@ -190,17 +190,17 @@ describe PopTrumps::Application do
       end
       
       it "notifies both players about the result of the round" do
-        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
         
-        PopTrumps::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
             artist_json(@imogen), artist_json(@justin), artist_json(@gaga), artist_json(@sufjan)
           ])
           
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [])
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [])
           
-        PopTrumps::Messaging.should_receive(:publish).with(@alice, "winner", "username" => "bob")
-        PopTrumps::Messaging.should_receive(:publish).with(@bob,   "winner", "username" => "bob")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@alice, "winner", "username" => "bob")
+        PopTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "winner", "username" => "bob")
         
         post "/games/#{@game.id}/ack.json", :username => "alice"
       end

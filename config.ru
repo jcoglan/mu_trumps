@@ -1,2 +1,2 @@
 require './lib/pop_trumps'
-run PopTrumps::Frontend.new
+run PopTrumps::Web::Frontend.new
