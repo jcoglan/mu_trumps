@@ -53,7 +53,7 @@ module MuTrumps
       
       def flush(username)
         return unless @channels.has_key?(username) and
-        @connections.has_key?(username)
+                      @connections.has_key?(username)
         
         events = @channels.delete(username)
         @connections.delete(username).succeed(events)
