@@ -10,8 +10,16 @@ ActiveRecord::Base.establish_connection(
 require dir + '/../config/schema'
 require dir + '/factories'
 
+require 'rack/test'
+require dir + '/thin_runner'
+require 'uri'
+require 'net/http'
+
+require 'thin'
+Thin::Logging.silent = true
+
 require 'fakeweb'
-FakeWeb.allow_net_connect = false
+FakeWeb.allow_net_connect = %r[^https?://localhost]
 
 FakeWeb.register_uri(:get, 'http://ws.audioscrobbler.com/2.0/?user=jcoglan&method=user.gettopartists&format=json&api_key=fdb6a3b0db7da333c1eb1a7167160397',
                      :body => File.read(dir + '/fixtures/top_artists.json'))
