@@ -33,6 +33,16 @@ describe MuTrumps::Game do
       end
     end
     
+    describe "when there is a game with no participants" do
+      before do
+        @game = MuTrumps::Game.create!
+      end
+      
+      it "returns the game" do
+        MuTrumps::Game.join(alice).should == @game
+      end
+    end
+    
     describe "when there is a game with one participant" do
       let(:game) { MuTrumps::Game.join(bob) }
       
@@ -52,6 +62,19 @@ describe MuTrumps::Game do
       it "assigns the other half of the game deck to the user" do
         game.cards_for(bob).map { |c| c.artist.name }.should == ["Justin Bieber", "Sufjan Stevens"]
       end
+    end
+  end
+  
+  describe "leave" do
+    let(:game) { MuTrumps::Game.join(alice) }
+    
+    it "removes the player from the game" do
+      game.leave(alice)
+      game.reload.users.should == []
+    end
+    
+    it "throws an error if the user is not in the game" do
+      lambda { game.leave(bob) }.should raise_error(MuTrumps::Game::UnknownPlayer)
     end
   end
   

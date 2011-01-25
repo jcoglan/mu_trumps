@@ -12,15 +12,16 @@ module MuTrumps
     
     class PlayOutOfTurn < StandardError ; end
     class NotInDeck     < StandardError ; end
+    class UnknownPlayer < StandardError ; end
 
     def self.join(user)
       game = last
-      game = create unless game and game.users.size == 1
-      game.add_player(user)
+      game = create unless game and game.users.size < 2
+      game.join(user)
       game
     end
     
-    def add_player(user)
+    def join(user)
       cards.each_with_index do |card, index|
         next unless (users.empty? and index.even?) or (not users.empty? and index.odd?)
         card.update_attribute(:user, user)
@@ -28,6 +29,11 @@ module MuTrumps
       users << user
       self.current_user ||= user
       save
+    end
+    
+    def leave(user)
+      raise UnknownPlayer unless users.include?(user)
+      users.delete(user)
     end
     
     def cards_for(user)
