@@ -91,9 +91,9 @@ describe MuTrumps::Web::Application do
       end
       
       it "messages the user who started the game" do
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "start")
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "alice")
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "alice")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "start")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "current_user", "username" => "alice")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob,   "current_user", "username" => "alice")
         post "/games.json", :username => "bob"
       end
     end
@@ -148,7 +148,7 @@ describe MuTrumps::Web::Application do
     end
     
     it "notifies the waiting user of the play" do
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@bob, "play",
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob, "play",
                                                         "username" => "alice",
                                                         "stat"     => "stamina",
                                                         "value"    => 0)
@@ -170,19 +170,19 @@ describe MuTrumps::Web::Application do
     end
     
     it "notifies both players about the result of the round" do
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob,   "result", "result" => "win")
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "result", "result" => "lose")
 
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob, "cards", "cards" => [
           artist_json(@sufjan), artist_json(@imogen), artist_json(@justin)
         ])
       
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "cards", "cards" => [
           artist_json(@gaga)
         ])
       
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "current_user", "username" => "bob")
-      MuTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "current_user", "username" => "bob")
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "current_user", "username" => "bob")
+      MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob,   "current_user", "username" => "bob")
       
       post "/games/#{@game.id}/ack.json", :username => "bob"
     end
@@ -194,17 +194,17 @@ describe MuTrumps::Web::Application do
       end
       
       it "notifies both players about the result of the round" do
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "result", "result" => "win")
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "result", "result" => "lose")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob,   "result", "result" => "win")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "result", "result" => "lose")
         
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@bob, "cards", "cards" => [
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob, "cards", "cards" => [
             artist_json(@imogen), artist_json(@justin), artist_json(@gaga), artist_json(@sufjan)
           ])
           
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "cards", "cards" => [])
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "cards", "cards" => [])
           
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@alice, "winner", "username" => "bob")
-        MuTrumps::Web::Messaging.should_receive(:publish).with(@bob,   "winner", "username" => "bob")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @alice, "winner", "username" => "bob")
+        MuTrumps::Web::Messaging.should_receive(:publish).with(@game, @bob,   "winner", "username" => "bob")
         
         post "/games/#{@game.id}/ack.json", :username => "alice"
       end

@@ -14,7 +14,7 @@ module MuTrumps
         
         def notify_current_user(game)
           game.users.each do |user|
-            Messaging.publish(user, 'current_user', 'username' => game.current_user.lastfm_username)
+            Messaging.publish(game, user, 'current_user', 'username' => game.current_user.lastfm_username)
           end
         end
         
@@ -46,7 +46,7 @@ module MuTrumps
         game  = Game.join(user)
         
         if game.users.size == 2
-          Messaging.publish(game.users.first, "start")
+          Messaging.publish(game, game.users.first, "start")
           notify_current_user(game)
         end
         
@@ -80,7 +80,7 @@ module MuTrumps
           
           game.play(user, artist, stat)
           
-          Messaging.publish(game.waiting_user, 'play',
+          Messaging.publish(game, game.waiting_user, 'play',
                             'username' => user.lastfm_username,
                             'stat'     => stat,
                             'value'    => artist.stats[stat])
@@ -98,16 +98,16 @@ module MuTrumps
           
           game.ack(user)
           
-          Messaging.publish(game.current_user, 'result', 'result' => 'win')
-          Messaging.publish(game.waiting_user, 'result', 'result' => 'lose')
+          Messaging.publish(game, game.current_user, 'result', 'result' => 'win')
+          Messaging.publish(game, game.waiting_user, 'result', 'result' => 'lose')
           
           [game.current_user, game.waiting_user].each do |user|
-            Messaging.publish(user, 'cards', 'cards' => cards_for_user(game, user))
+            Messaging.publish(game, user, 'cards', 'cards' => cards_for_user(game, user))
           end
           
           if winner = game.winner
             game.users.each do |user|
-              Messaging.publish(user, 'winner', 'username' => winner.lastfm_username)
+              Messaging.publish(game, user, 'winner', 'username' => winner.lastfm_username)
             end
           else
             notify_current_user(game)

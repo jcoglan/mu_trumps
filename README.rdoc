@@ -7,7 +7,7 @@ Joris[http://twitter.com/joriszaalberg] and Gideon[http://twitter.com/gideonb].
 
 To run the server, you need Ruby and these gems:
 
-  gem install rack thin json sinatra nokogiri activerecord acts_as_list sqlite3
+  gem install faye sinatra nokogiri activerecord acts_as_list sqlite3
 
 Initialize the database:
 

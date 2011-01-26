@@ -1,25 +1,8 @@
 require 'spec_helper'
 
-RSpec::Matchers.define :take do |duration|
-  match do |proc|
-    begin
-      start = Time.now
-      proc.call
-      diff = Time.now - start
-      
-      case duration
-      when Numeric then diff >= duration
-      when Range then diff >= duration.begin and diff < duration.end
-      end
-    rescue => e
-      false
-    end
-  end
-end
-
 describe MuTrumps::Web::Messaging do
   let(:app) do
-    app = MuTrumps::Web::Messaging.new(:timeout => 2)
+    app = MuTrumps::Web::Messaging.new(:timeout => 2, :mount => "/")
     app.extend(ThinRunner)
     app
   end
@@ -27,16 +10,26 @@ describe MuTrumps::Web::Messaging do
   before(:all) { app.start(8000) }
   after(:all)  { app.stop }
   
-  def connect(game_id = nil)
-    game_id ||= game.id
-    uri = URI.parse("http://localhost:8000/games/#{game_id}/alice")
-    JSON.parse(Net::HTTP.get_response(uri).body)
+  def connect
+    endpoint  = URI.parse("http://localhost:8000/")
+    channel   = "/games/#{game.id}/alice"
+    
+    handshake = '{"channel":"/meta/handshake","version":"1.0","supportedConnectionTypes":["long-polling"]}'
+    response  = Net::HTTP.post_form(endpoint, "message" => handshake)
+    client_id = JSON.parse(response.body)[0]["clientId"]
+    
+    subscribe = '{"channel":"/meta/subscribe","clientId":"' + client_id + '","subscription":"' + channel + '"}'
+    response  = Net::HTTP.post_form(endpoint, "message" => subscribe)
+    
+    connect   = '{"channel":"/meta/connect","clientId":"' + client_id + '","connectionType":"long-polling"}'
+    response  = Net::HTTP.post_form(endpoint, "message" => connect)
+    
+    JSON.parse(response.body).map { |m| m['data'] }.compact
   end
   
   let(:alice) { Factory :user, :lastfm_username => "alice" }
   let(:bob)   { Factory :user, :lastfm_username => "bob"   }
   let(:game)  { Factory :game }
-  let(:other) { Factory :game }
   
   before do
     game.join(alice)
@@ -55,7 +48,7 @@ describe MuTrumps::Web::Messaging do
   
   describe "when a message is sent" do
     before do
-      EM.add_timer(1) { MuTrumps::Web::Messaging.publish(alice, "hello") }
+      EM.add_timer(1) { MuTrumps::Web::Messaging.publish(game, alice, "hello") }
     end
     
     it "receives an event" do

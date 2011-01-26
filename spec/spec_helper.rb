@@ -15,6 +15,8 @@ require dir + '/thin_runner'
 require 'uri'
 require 'net/http'
 
+require dir + '/matchers'
+
 require 'thin'
 Thin::Logging.silent = true
 
