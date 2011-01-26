@@ -32,8 +32,9 @@ module MuTrumps
       end
       
       def call(env)
-        request  = Rack::Request.new(env)
-        username = request.path_info.split('/')[1]
+        request = Rack::Request.new(env)
+        parts = request.path_info.split(/\/|\./).delete_if { |s| s == '' }
+        game_id, username = *parts[1..2]
         
         # This is basically a message queue so we don't want to let
         # other connections come in and eat the user's queue!

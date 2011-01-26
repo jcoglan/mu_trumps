@@ -27,14 +27,16 @@ describe MuTrumps::Web::Messaging do
   before(:all) { app.start(8000) }
   after(:all)  { app.stop }
   
-  def connect
-    uri = URI.parse("http://localhost:8000/alice")
-    Net::HTTP.get_response(uri).body
+  def connect(game_id = nil)
+    game_id ||= game.id
+    uri = URI.parse("http://localhost:8000/games/#{game_id}/alice")
+    JSON.parse(Net::HTTP.get_response(uri).body)
   end
   
   let(:alice) { Factory :user, :lastfm_username => "alice" }
   let(:bob)   { Factory :user, :lastfm_username => "bob"   }
   let(:game)  { Factory :game }
+  let(:other) { Factory :game }
   
   before do
     game.join(alice)
@@ -43,7 +45,7 @@ describe MuTrumps::Web::Messaging do
   
   describe "when no messages are sent" do
     it "receives no events" do
-      connect.should == "[]"
+      connect.should == []
     end
     
     it "returns after the timeout" do
@@ -57,7 +59,7 @@ describe MuTrumps::Web::Messaging do
     end
     
     it "receives an event" do
-      connect.should == '[{"event":"hello"}]'
+      connect.should == [{"event" => "hello"}]
     end
     
     it "returns when the message is sent" do
