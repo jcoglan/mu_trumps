@@ -5,7 +5,7 @@ Midem conference in Cannes. It was built by James[http://github.com/jcoglan],
 Jono[http://github.com/jonocole], Ben[http://github.com/gearmonkey],
 Joris[http://twitter.com/joriszaalberg] and Gideon[http://twitter.com/gideonb].
 
-To run the server, you need Ruby and these gems:
+To run the service, you need Ruby and these gems:
 
   gem install faye sinatra nokogiri activerecord acts_as_list sqlite3
 
@@ -30,3 +30,50 @@ And run the server:
 
   gem install rspec rack-test factory_girl fakeweb
   rspec -bcf nested spec/
+
+
+== Service API
+
+The service provides a RESTish interface for interacting with the game engine.
+This consists of several GET/POST endpoints and a Bayeux messaging service, all
+of which output JSON.
+
+
+=== Using the messaging service
+
+In-game events are transmitted to players through a pub/sub messaging service
+using the Bayeux protocol. Each client should subscribe to a channel for the
+current game and user, for example <tt>/games/1/alice</tt>. If you're developing
+a JavaScript or Ruby client, you can use Faye[http://faye.jcoglan.com] to
+subscribe to the channel and receive events.
+
+If you don't have a Bayeux client available, you can set up long-polling by
+building the protocol messages yourself: see https://gist.github.com/795082.
+
+Events are transmitted as the data payload of Bayeux messages, so you can get
+them using the Faye client:
+
+  var fayeClient = new Faye.Client('http://localhost:8000/messaging')
+  
+  fayeClient.subscribe('/games/1/alice', function(event) {
+    // handle event object
+  })
+
+If you're doing long-polling by hand, you can get the events out of the
+<tt>/meta/connect</tt> response by looking for messages with <tt>data</tt>
+fields, e.g.:
+
+  connect  = '{"channel":"/meta/connect","clientId":"' + client_id + '","connectionType":"long-polling"}'
+  response = Net::HTTP.post_form(endpoint, 'message' => connect)
+  
+  # response.body == '[{"channel":"/meta/connect",...},{"channel":"/games/1/alice","data":{"event":"start",...}},...]'
+  JSON.parse(response.body).each do |message|
+    if message['data']
+      handle_event(message['data'])
+    end
+  end
+
+Remember to unsubscribe from the game channel when the game is over. See
+https://gist.github.com/795082 if you need to implement this yourself.
+
+  fayeClient.unsubscribe('/games/1/alice')
