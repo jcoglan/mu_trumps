@@ -1,0 +1,3 @@
+[submodule "apps/iphone"]
+	path = apps/iphone
+	url = git://github.com/jonocole/mu_trumps-iPhone.git
